@@ -1,0 +1,14 @@
+/bin/
+*.exe
+*.dll
+*.so
+*.dylib
+*.code-workspace
+*.out
+*.ps?
+vendor/
+
+.idea/
+.vscode/
+
+.DS_Store
