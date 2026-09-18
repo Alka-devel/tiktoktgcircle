@@ -66,26 +66,26 @@ const (
 	errParseHeight             = "не удалось распарсить высоту: %w"
 
 	// videoHand.go
-	askOffsetPrompt           = "Ой-ой, походу видео не квадратное.\nКакой отступ сделать сверху?"
-	btnTop                    = "Верх"
-	btnCenter                 = "Центр"
-	btnBottom                 = "Низ"
-	btnThird                  = "1/3"
-	btnTwoThirds              = "2/3"
-	btnManual                 = "Вручную (в процентах)"
-	askManualPercentPrompt    = "Введите отступ сверху в процентах (0-100)"
-	errNoChoice               = "не дождались выбора: %w"
-	errUnexpectedUpdateType   = "получен неожиданный тип апдейта вместо callback"
-	errInvalidPercent         = "некорректный процент: %q"
-	errUnknownOffsetChoice    = "неизвестный выбор смещения: %q"
-	errNoResponse             = "не дождались ответа: %w"
-	errExpectedTextMessage    = "ожидалось текстовое сообщение"
-	errCreateRequest          = "не удалось создать запрос: %w"
-	logDownloadAttemptFailed  = "попытка %d скачать файл не удалась: %v"
-	errUnexpectedStatus       = "неожиданный статус %d"
-	errCreateFile             = "не удалось создать файл %s: %w"
-	errWriteFile              = "не удалось записать файл: %w"
-	errDownloadFailedRetries  = "не удалось скачать файл после нескольких попыток: %w"
+	askOffsetPrompt          = "Ой-ой, походу видео не квадратное.\nКакой отступ сделать сверху?"
+	btnTop                   = "Верх"
+	btnCenter                = "Центр"
+	btnBottom                = "Низ"
+	btnThird                 = "1/3"
+	btnTwoThirds             = "2/3"
+	btnManual                = "Вручную (в процентах)"
+	askManualPercentPrompt   = "Введите отступ сверху в процентах (0-100)"
+	errNoChoice              = "не дождались выбора: %w"
+	errUnexpectedUpdateType  = "получен неожиданный тип апдейта вместо callback"
+	errInvalidPercent        = "некорректный процент: %q"
+	errUnknownOffsetChoice   = "неизвестный выбор смещения: %q"
+	errNoResponse            = "не дождались ответа: %w"
+	errExpectedTextMessage   = "ожидалось текстовое сообщение"
+	errCreateRequest         = "не удалось создать запрос: %w"
+	logDownloadAttemptFailed = "попытка %d скачать файл не удалась: %v"
+	errUnexpectedStatus      = "неожиданный статус %d"
+	errCreateFile            = "не удалось создать файл %s: %w"
+	errWriteFile             = "не удалось записать файл: %w"
+	errDownloadFailedRetries = "не удалось скачать файл после нескольких попыток: %w"
 )
 
 var (
@@ -94,8 +94,9 @@ var (
 	ffprobePath = "ffprobe"
 	botToken    = ""
 	exitPass    = "0000"
+	exitAbil    = false
 	proxyIp     = "127.0.0.1"
-	proxyPort   = "1984"
+	proxyPort   = 1984
 	cropRegex   = regexp.MustCompile(`crop=(\d+:\d+:\d+:\d+)`)
 	waiter      = NewWaiter()
 )
@@ -112,9 +113,10 @@ func load() (*telego.Bot, context.Context) {
 }
 func main() {
 	flag.StringVar(&botToken, "token", "", "Token from BotFather")
+	flag.BoolVar(&exitAbil, "exit-ability", exitAbil, "The ability of disabling the bot")
 	flag.StringVar(&exitPass, "exit-pass", exitPass, "Password for stopping bot")
 	flag.StringVar(&proxyIp, "proxy-ip", proxyIp, "Proxy IP-adress")
-	flag.StringVar(&proxyPort, "proxy-port", proxyPort, "Proxy port")
+	flag.IntVar(&proxyPort, "proxy-port", proxyPort, "Proxy port")
 	flag.StringVar(&ytdlpPath, "ytdlp-path", ytdlpPath, "Path to yt-dlp binary")
 	flag.StringVar(&ffmpegPath, "ffmpeg-path", ffmpegPath, "Path to ffmpeg binary")
 	flag.StringVar(&ffprobePath, "ffprobe-path", ffprobePath, "Path to ffprobe binary")
@@ -127,7 +129,9 @@ func main() {
 	_ = bh.Start()
 }
 func initComs(bh *th.BotHandler) {
-	exCom(bh)
+	if exitAbil {
+		exCom(bh)
+	}
 	ttCom(bh)
 	cirCom(bh)
 	videoDispatchCom(bh)
